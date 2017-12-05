@@ -55,6 +55,10 @@ if [ -n "$STEMCELL_VERSION" ]; then
         ' < pivnet-product/metadata.json
     )
 
+    aws configure set aws_access_key_id {{S3_ACCESS_KEY_ID}}
+    aws configure set aws_secret_access_key {{S3_SECRET_ACCESS_KEY}}
+    aws configure set default.region {{S3_REGION}}
+
     stemcell_s3_path="s3://${S3_BUCKET_NAME}/${S3_PATH_PREFIX}/${product_slug}/${stemcell}"
     if [[ -z $(aws s3 --endpoint-url ${S3_ENDPOINT} ls "${stemcell_s3_path}") ]]; then
       abort "Could not find ${stemcell} in ${stemcell_s3_path}."

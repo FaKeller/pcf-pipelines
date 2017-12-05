@@ -18,6 +18,9 @@ params:
   S3_BUCKET_NAME:
   S3_ENDPOINT:
   S3_PATH_PREFIX:
+  S3_REGION:
+  S3_ACCSESS_KEY_ID:
+  S3_SECRET_ACCESS_KEY:
 
 inputs:
   - name: pivnet-product

@@ -55,8 +55,11 @@ if [ -n "$STEMCELL_VERSION" ]; then
         ' < pivnet-product/metadata.json
     )
 
-    pivnet-cli login --api-token="$PIVNET_API_TOKEN"
-    pivnet-cli download-product-files -p "$product_slug" -r $STEMCELL_VERSION -g "*${IAAS}*" --accept-eula
+    stemcell_s3_path="s3://${S3_BUCKET_NAME}/${S3_PATH_PREFIX}/${product_slug}/${stemcell}"
+    if [[ -z $(aws s3 --endpoint-url ${S3_ENDPOINT} ls "${stemcell_s3_path}") ]]; then
+      abort "Could not find ${stemcell} in ${stemcell_s3_path}."
+    fi
+    aws s3 --endpoint-url ${S3_ENDPOINT} cp "${stemcell_s3_path}" "./${stemcell}"
 
     SC_FILE_PATH=`find ./ -name *.tgz`
 
@@ -72,3 +75,8 @@ fi
 # Should the slug contain more than one product, pick only the first.
 FILE_PATH=`find ./pivnet-product -name *.pivotal | sort | head -1`
 om-linux -t https://$OPSMAN_DOMAIN_OR_IP_ADDRESS -u $OPS_MGR_USR -p $OPS_MGR_PWD -k --request-timeout 3600 upload-product -p $FILE_PATH
+
+function abort() {
+  echo "${1}"
+  exit 1
+}

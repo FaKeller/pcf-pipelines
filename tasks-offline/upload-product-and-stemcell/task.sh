@@ -67,12 +67,12 @@ if [ -n "$STEMCELL_VERSION" ]; then
     aws configure set aws_secret_access_key ${S3_SECRET_ACCESS_KEY}
     aws configure set default.region ${S3_REGION}
 
-    stemcell_s3_path="s3://${S3_BUCKET_NAME}/${S3_PATH_PREFIX}/${product_slug}/${stemcell}"
+    stemcell_s3_path="s3://${S3_BUCKET_NAME}/${S3_PATH_PREFIX}/${product_slug}/${STEMCELL_VERSION}.tgz"
     echo "Stemcell path: ${stemcell_s3_path}"
     if [[ -z $(aws s3 --endpoint-url ${S3_ENDPOINT} ls "${stemcell_s3_path}") ]]; then
-      abort "Could not find stemcell '${stemcell}' at path '${stemcell_s3_path}'."
+      abort "Could not find stemcell '${STEMCELL_VERSION}' at path '${stemcell_s3_path}'."
     fi
-    aws s3 --endpoint-url ${S3_ENDPOINT} cp "${stemcell_s3_path}" "./${stemcell}"
+    aws s3 --endpoint-url ${S3_ENDPOINT} cp "${stemcell_s3_path}" "./sc-${STEMCELL_VERSION}.tgz"
 
     SC_FILE_PATH=`find ./ -name *.tgz`
 
